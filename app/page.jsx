@@ -1,73 +1,47 @@
 'use client'
 
-import { useState } from 'react'
-import { SidebarNav } from "@/components/sidebar-nav"
-import { Header } from "@/components/header"
-import { CategoryFilter } from "@/components/category-filter"
-import { FoodGrid } from "@/components/food-grid"
-import { Cart } from "@/components/cart"
-import { Footer } from "@/components/footer"
-import { MenuSection } from "@/components/MenuSection"
-import { TableSection } from "@/components/TableSection"
-import { ReservationSection } from "@/components/ReservationSection"
-import { DeliverySection } from "@/components/DeliverySection"
-import { AccountingSection } from "@/components/AccountingSection"
-import { SettingsSection } from "@/components/SettingsSection"
 
-export default function POSPage() {
-  const [cartItems, setCartItems] = useState([])
-  const [activeSection, setActiveSection] = useState("MenuSection")
 
-  const handleAddToCart = (item) => {
-    setCartItems(prevItems => {
-      const existingItem = prevItems.find(i => i.title === item.title)
-      if (existingItem) {
-        return prevItems.map(i => 
-          i.title === item.title ? { ...i, quantity: item.quantity } : i
-        )
-      } else {
-        return [...prevItems, item]
-      }
-    })
-  }
+import Link from 'next/link';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import { Button } from '@/components/ui/button';
 
-  const renderActiveSection = () => {
-    switch (activeSection) {
-      case "MenuSection":
-        return (
-          <>
-            <CategoryFilter />
-            <FoodGrid onAddToCart={handleAddToCart} />
-          </>
-        )
-      case "TableSection":
-        return <TableSection />
-      case "ReservationSection":
-        return <ReservationSection />
-      case "DeliverySection":
-        return <DeliverySection />
-      case "AccountingSection":
-        return <AccountingSection />
-      case "SettingsSection":
-        return <SettingsSection />
-      default:
-        return <MenuSection />
-    }
-  }
 
+export default function Index() {
+  
   return (
-    <div className="flex h-screen bg-gray-100">
-      <SidebarNav onSectionChange={setActiveSection} />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <Header />
-        <div className="flex-1 flex overflow-hidden">
-          <main className="flex-1 overflow-auto p-4">
-            {renderActiveSection()}
-          </main>
-          {activeSection === "MenuSection" && <Cart cartItems={cartItems} onUpdateCart={setCartItems} />}
-        </div>
-        <Footer />
-      </div>
+    <div className="flex min-h-screen items-center justify-center bg-gray-100 p-4">
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-center">Welcome to our e-commerce.</CardTitle>
+        </CardHeader>
+        
+        <CardContent>
+        <CardDescription className='text-center'>
+        You must have an account to log in.
+          </CardDescription>
+        </CardContent>
+        <CardFooter className="flex-col">
+        <div className="flex-col mt-4 text-center text-sm space-y-2">
+        ¿Do you have an account? 
+        <br></br>
+            <Button>
+            <Link href="/login">
+           Log in
+            </Link>
+            </Button>
+          </div>
+          <div className="flex-col mt-4 text-center text-sm space-y-2">
+        ¿You dont have an account? 
+        <br></br>
+            <Button>
+            <Link href="/signup">
+           Sign up
+            </Link>
+            </Button>
+          </div>
+        </CardFooter>
+      </Card>
     </div>
-  )
+  );
 }

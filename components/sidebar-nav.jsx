@@ -1,23 +1,24 @@
 'use client';
 
 import { useState } from 'react';
-import { Menu, TableIcon, CalendarRange, Truck, Calculator, Settings, LogOut } from 'lucide-react'
+import { Menu, TableIcon, CalendarRange, Truck, Calculator, Settings, LogOut, ShoppingCart, User } from 'lucide-react'
 import { Button } from "@/components/ui/button"
+import { useToken } from '@/hooks/useToken';
 
 const navItems = [
-  { icon: Menu, label: "Menu", color: "text-green-600", component: "MenuSection" },
-  { icon: TableIcon, label: "Table Services", color: "text-gray-600", component: "TableSection" },
-  { icon: CalendarRange, label: "Reservation", color: "text-gray-600", component: "ReservationSection" },
+  { icon: Menu, label: "Menu", color: "text-gray-600", component: "MenuSection" },
+  { icon: User, label: "Profile", color: "text-gray-600", component: "UserProfile" },
+  { icon: TableIcon, label: "Product Catalog", color: "text-gray-600", component: "ProductCatalog" },
+  { icon: ShoppingCart, label: "Cart", color: "text-gray-600", component: "ShoppingCart" },
   { icon: Truck, label: "Delivery", color: "text-gray-600", component: "DeliverySection" },
-  { icon: Calculator, label: "Accounting", color: "text-gray-600", component: "AccountingSection" },
+  { icon: Calculator, label: "Order History", color: "text-gray-600", component: "OrderHistory" },
   { icon: Settings, label: "Settings", color: "text-gray-600", component: "SettingsSection" },
 ]
 
-export function SidebarNav({ onSectionChange }) {
-  const [activeSection, setActiveSection] = useState("Menu");
+export function SidebarNav({ onSectionChange, activeSection }) {
+  const {logout} = useToken()
 
   const handleSectionClick = (section) => {
-    setActiveSection(section);
     onSectionChange(section);
   };
 
@@ -29,13 +30,13 @@ export function SidebarNav({ onSectionChange }) {
           alt="Chili POS Logo"
           className="w-8 h-8"
         />
-        <span className="font-semibold">CHILI POS</span>
+        <span className="font-semibold">E-commerce</span>
       </div>
       <nav className="space-y-2">
         {navItems.map((item, index) => (
           <Button 
             key={index} 
-            variant={activeSection === item.label ? "secondary" : "ghost"} 
+            variant={activeSection === item.component ? "secondary" : "ghost"} 
             className={`w-full justify-start ${item.color}`}
             onClick={() => handleSectionClick(item.component)}
           >
@@ -44,7 +45,7 @@ export function SidebarNav({ onSectionChange }) {
           </Button>
         ))}
       </nav>
-      <Button variant="ghost" className="w-full justify-start mt-auto text-gray-600 absolute bottom-4 left-4">
+      <Button onClick={logout} variant="ghost" className="justify-start mt-auto text-gray-600 absolute bottom-4 left-4">
         <LogOut className="mr-2 h-4 w-4" />
         Logout
       </Button>
