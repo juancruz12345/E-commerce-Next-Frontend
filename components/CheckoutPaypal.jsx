@@ -20,9 +20,9 @@ export function CheckoutPaypal({ user, items, total  }){
 
       const order = await response.json();
       console.log(order)
-      if (!order.id) throw new Error("No se recibió un orderID válido");
+      if (!order.order_id) throw new Error("No se recibió un orderID válido");
 
-      return order.id; // ✅ Devuelve el ID de la orden creada
+      return order.order_id; // ✅ Devuelve el ID de la orden creada
     } catch (error) {
       console.error("Error en createOrder:", error);
     }

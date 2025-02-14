@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Trash2 } from 'lucide-react';
 
-export function ShoppingCart({ cartItems, onUpdateCart }) {
+export function ShoppingCart({ cartItems, onUpdateCart, setActiveSection  }) {
   const [total, setTotal] = useState(0);
+
 
   useEffect(() => {
     const newTotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -65,7 +66,7 @@ export function ShoppingCart({ cartItems, onUpdateCart }) {
       <div className="mt-4 text-right">
         <strong>Total: ${total.toFixed(2)}</strong>
       </div>
-      <Button className="mt-4">Proceed to Checkout</Button>
+      <Button onClick={()=>setActiveSection('Checkout')} className="mt-4">Proceed to Checkout</Button>
     </div>
   );
 }
