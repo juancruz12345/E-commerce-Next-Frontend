@@ -8,6 +8,7 @@ import { ShoppingCart } from "@/components/ShoppingCart"
 import { OrderHistory } from "@/components/OrderHistory"
 import { UserProfile } from "@/components/UserProfile"
 import { Checkout } from "@/components/Checkout"
+import { SettingsSection } from '@/components/SettingsSection'
 
 
 export default function POSPage() {
@@ -61,11 +62,14 @@ const handleSearch = (term) => {
       case "ShoppingCart":
         return <ShoppingCart cartItems={cartItems} onUpdateCart={handleUpdateCart} setActiveSection={setActiveSection} />;
       case "OrderHistory":
-        return <OrderHistory />;
+        return <OrderHistory user={user}/>;
       case "UserProfile":
         return <UserProfile user={user}/>;
       case "Checkout":
         return <Checkout user={user} cartItems={cartItems} total={cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)} />;
+      case "SettingsSection":
+        return <SettingsSection user={user}/>
+
       default:
         return <ProductCatalog onAddToCart={handleAddToCart} searchTerm={searchTerm}/>;
     }

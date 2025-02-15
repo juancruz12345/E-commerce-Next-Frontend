@@ -1,17 +1,32 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
 export function UserProfile({user}) {
-  console.log(user)
-  const [user2, setUser] = useState({
-    name: 'John Doe',
-    email: 'john@example.com',
-    address: '123 Main St, City, Country',
-  });
+  
+
+
+  const [profile, setProfile] = useState(null)
+
+  async function FetchData(){
+    const response = await fetch(`http://localhost:5000/user/${user.id}`,{
+        method : 'GET',
+        credentials: 'include'
+    })
+    
+    const data = await response.json()
+    console.log(data.user)
+    setProfile(data.user[0])
+}
+
+useEffect(()=>{
+    
+    FetchData()
+  
+},[])
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -30,13 +45,16 @@ export function UserProfile({user}) {
   return (
     <div>
       <h2 className="text-2xl font-bold mb-4">User Profile</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
+      {
+        profile!==null && 
+
+        <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <Label htmlFor="name">Name</Label>
           <Input
             id="name"
             name="name"
-            value={user2.name}
+            value={profile.username}
             onChange={handleChange}
             required
           />
@@ -47,7 +65,7 @@ export function UserProfile({user}) {
             id="email"
             name="email"
             type="email"
-            value={user2.email}
+            value={profile.email}
             onChange={handleChange}
             required
           />
@@ -57,13 +75,15 @@ export function UserProfile({user}) {
           <Input
             id="address"
             name="address"
-            value={user2.address}
+            value={''}
             onChange={handleChange}
             required
           />
         </div>
         <Button type="submit">Update Profile</Button>
       </form>
+      }
+     
     </div>
   );
 }

@@ -32,7 +32,8 @@ export default function Login() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ username, password }),
-    }).then((res) => {
+    }).then(async(res) => {
+      const data = await res.json()
       if (res.ok) {
         setHidden(false);
         setSpanTxt("Login...");
@@ -40,9 +41,11 @@ export default function Login() {
           window.location.href = "/protected";
         }, 2000);
       } else {
+        
         e.preventDefault();
         setHidden(false);
-        setSpanTxt("Login error...");
+        console.log(data)
+        setSpanTxt(data.error || "Login error...");
         setTimeout(() => {
           setHidden(true);
         }, 2000);

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 const initialOrders = [
@@ -9,8 +9,32 @@ const initialOrders = [
   { id: 3, date: '2023-06-30', total: 29.99, status: 'Processing' },
 ];
 
-export function OrderHistory() {
-  const [orders, setOrders] = useState(initialOrders);
+
+
+
+export function OrderHistory({user}) {
+  ///const [orders, setOrders] = useState(initialOrders);
+
+
+  const [orders, setOrders] = useState(null);
+  
+    async function FetchData(){
+      const response = await fetch(`http://localhost:5000/orders/${user.id}`,{
+          method : 'GET',
+          credentials: 'include'
+      })
+      
+      const data = await response.json()
+      console.log(data.orders)
+      setOrders(data)
+  }
+  
+  useEffect(()=>{
+      
+      FetchData()
+    
+  },[])
+
 
   return (
     <div>
