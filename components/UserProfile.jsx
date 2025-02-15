@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { toast } from 'sonner';
 
 export function UserProfile({user}) {
   
@@ -18,9 +19,35 @@ export function UserProfile({user}) {
     })
     
     const data = await response.json()
-    console.log(data.user)
     setProfile(data.user[0])
 }
+
+async function updateUser(updatedData) {
+  try {
+    const response = await fetch(`http://localhost:5000/user/${profile.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updatedData),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Error al actualizar el usuario");
+    }
+
+    
+    toast.success('Usuario actualizado con éxito!');
+    setProfile(prev => ({ ...prev, ...updatedData }));
+    return data;
+  } catch (error) {
+    console.error("Error:", error.message);
+    toast.error(error.message);
+  }
+}
+
 
 useEffect(()=>{
     
@@ -30,16 +57,23 @@ useEffect(()=>{
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setUser(prevUser => ({
+    setProfile(prevUser => ({
       ...prevUser,
       [name]: value
     }));
+   
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Here you would typically send the updated user data to your backend
+
+    if (!profile) {
+      toast.error("El perfil no está cargado.");
+      return;
+    }
+    updateUser({ email: profile?.email, adress: profile?.adress })
     console.log('Updated user:', user);
+    
   };
 
   return (
@@ -49,23 +83,14 @@ useEffect(()=>{
         profile!==null && 
 
         <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <Label htmlFor="name">Name</Label>
-          <Input
-            id="name"
-            name="name"
-            value={profile.username}
-            onChange={handleChange}
-            required
-          />
-        </div>
+        
         <div>
           <Label htmlFor="email">Email</Label>
           <Input
             id="email"
             name="email"
             type="email"
-            value={profile.email}
+            defaultValue={profile.email}
             onChange={handleChange}
             required
           />
@@ -74,8 +99,8 @@ useEffect(()=>{
           <Label htmlFor="address">Address</Label>
           <Input
             id="address"
-            name="address"
-            value={''}
+            name="adress"
+            defaultValue={profile?.adress}
             onChange={handleChange}
             required
           />

@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { Menu, TableIcon, CalendarRange, Truck, Calculator, Settings, LogOut, ShoppingCart, User } from 'lucide-react'
+
+import { Menu, TableIcon, CalendarRange, Truck, Calculator, Settings, LogOut, ShoppingCart, User, X } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { useToken } from '@/hooks/useToken';
 
@@ -15,22 +15,28 @@ const navItems = [
   { icon: Settings, label: "Settings", color: "text-gray-600", component: "SettingsSection" },
 ]
 
-export function SidebarNav({ onSectionChange, activeSection }) {
+export function SidebarNav({ onSectionChange, activeSection, isMobileMenuOpen, setIsMobileMenuOpen }) {
   const {logout} = useToken()
 
   const handleSectionClick = (section) => {
     onSectionChange(section);
+    setIsMobileMenuOpen(false);
   };
 
   return (
-    <div className="w-64 p-4 border-r h-screen bg-white">
-      <div className="flex items-center gap-2 mb-8">
-        <img
-          src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-01-12%20at%2012.32.42%20PM-QicgA83ZI0TfZlOynDOqlhOGnbwzEv.jpeg"
-          alt="Chili POS Logo"
-          className="w-8 h-8"
-        />
-        <span className="font-semibold">E-commerce</span>
+    <div className={`fixed inset-y-0 left-0 z-50 w-64 p-4 border-r bg-white transform ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-200 ease-in-out md:relative md:translate-x-0`}>
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center gap-2">
+          <img
+            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-01-12%20at%2012.32.42%20PM-QicgA83ZI0TfZlOynDOqlhOGnbwzEv.jpeg"
+            alt="Chili POS Logo"
+            className="w-8 h-8"
+          />
+          <span className="font-semibold">E-commerce</span>
+        </div>
+        <Button variant="ghost" className="md:hidden" onClick={() => setIsMobileMenuOpen(false)}>
+          <X className="h-6 w-6" />
+        </Button>
       </div>
       <nav className="space-y-2">
         {navItems.map((item, index) => (

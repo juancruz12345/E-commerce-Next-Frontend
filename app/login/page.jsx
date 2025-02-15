@@ -6,17 +6,20 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
+import { Loader2 } from "lucide-react";
 
 export default function Login() {
   const [hidden, setHidden] = useState(true);
   const [spanTxt, setSpanTxt] = useState("");
   const [validated, setValidated] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const username = e.currentTarget[0].value;
     const password = e.currentTarget[1].value;
     const form = e.currentTarget;
+    setLoading(true)
 
     if (form.checkValidity() === false) {
       e.preventDefault();
@@ -36,7 +39,7 @@ export default function Login() {
       const data = await res.json()
       if (res.ok) {
         setHidden(false);
-        setSpanTxt("Login...");
+        
         setTimeout(() => {
           window.location.href = "/protected";
         }, 2000);
@@ -45,12 +48,14 @@ export default function Login() {
         e.preventDefault();
         setHidden(false);
         console.log(data)
-        setSpanTxt(data.error || "Login error...");
+        setSpanTxt(data.error || "Login error. Debes validar tu usuario");
         setTimeout(() => {
           setHidden(true);
         }, 2000);
       }
-    });
+    })
+    .catch(() => setSpanTxt("Error en la solicitud. Inténtalo de nuevo."))
+    .finally(() => setLoading(false));
   };
 
   return (
@@ -69,7 +74,9 @@ export default function Login() {
               <Label htmlFor="register-password">Password</Label>
               <Input id="register-password" type="password" minLength={6} maxLength={16} required className="mt-1" />
             </div>
-            <Button type="submit" className="w-full">Login</Button>
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ?  <Loader2 className="animate-spin" /> : "Login"}
+            </Button>
           </form>
           <div className="mt-2 text-center text-sm">
             <span className={`text-red-500 ${hidden ? "hidden" : "block"}`}>{spanTxt}</span>
