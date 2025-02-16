@@ -2,12 +2,16 @@
 
 import { use, useEffect, useState } from "react";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { CheckCircle, CircleX } from "lucide-react";
 
 export default function Verify({ params }) {
     const resolvedParams = use(params); // Se usa `use()` para desempaquetar `params`
     const { email } = resolvedParams; // Ahora `email` se puede acceder correctamente
 
     const [mensaje, setMensaje] = useState("Verificando...");
+    const [verificado, setVerificado] = useState(false)
 
     useEffect(() => {
         if (!email) return;
@@ -18,12 +22,14 @@ export default function Verify({ params }) {
                 const data = await response.json();
 
                 if (data.success) {
-                    setMensaje("✅ Tu cuenta ha sido verificada con éxito.");
+                    setVerificado(true)
+                    setMensaje("¡Verified account!");
                 } else {
-                    setMensaje("❌ Hubo un problema verificando tu cuenta.");
+                   setVerificado(false)
+                    setMensaje("Error to verified account.");
                 }
             } catch (error) {
-                setMensaje("❌ Error al conectar con el servidor.");
+                setMensaje("Error to server connection.");
                 console.error(error);
             }
         };
@@ -32,11 +38,25 @@ export default function Verify({ params }) {
     }, [email]);
 
     return (
-        <div style={{ textAlign: "center", marginTop: "50px" }}>
-            <h2>{mensaje}</h2>
-            <h3 style={{ color: "blue", marginTop: "10px" }}>
-                <Link href="/login">Back to login</Link>
-            </h3>
-        </div>
+        <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
+        <Card className="max-w-md w-full text-center shadow-lg">
+          <CardHeader>
+           {
+            verificado
+            ?  <CheckCircle className="text-green-500 w-16 h-16 mx-auto" />
+            : <CircleX className="text-red-500 w-16 h-16 mx-auto"/>
+           }
+            <CardTitle className="text-2xl font-bold mt-4">{mensaje}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Button
+              className="mt-6 w-full bg-green-500 hover:bg-green-600"
+              
+            >
+              <Link href="/login">Back to Login</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
     );
 }

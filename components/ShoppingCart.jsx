@@ -4,9 +4,11 @@ import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Trash2 } from 'lucide-react';
+import { CheckoutPaypal } from './CheckoutPaypal';
 
 export function ShoppingCart({ cartItems, onUpdateCart, setActiveSection  }) {
   const [total, setTotal] = useState(0);
+  
 
 
   useEffect(() => {
@@ -67,6 +69,8 @@ export function ShoppingCart({ cartItems, onUpdateCart, setActiveSection  }) {
         <strong>Total: ${total.toFixed(2)}</strong>
       </div>
       <Button onClick={()=>setActiveSection('Checkout')} className="mt-4">Proceed to Checkout</Button>
+      
+     
     </div>
   );
 }

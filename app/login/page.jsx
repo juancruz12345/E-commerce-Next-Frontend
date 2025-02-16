@@ -8,11 +8,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
 
+
 export default function Login() {
   const [hidden, setHidden] = useState(true);
   const [spanTxt, setSpanTxt] = useState("");
   const [validated, setValidated] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [succes, setSucces] = useState(false)
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -39,22 +41,25 @@ export default function Login() {
       const data = await res.json()
       if (res.ok) {
         setHidden(false);
-        
+        setSpanTxt("Login successful, connecting user...");
+        setSucces(true)
         setTimeout(() => {
+          setHidden(true);
           window.location.href = "/protected";
         }, 2000);
       } else {
         
         e.preventDefault();
         setHidden(false);
+        setSucces(false)
         console.log(data)
-        setSpanTxt(data.error || "Login error. Debes validar tu usuario");
+        setSpanTxt(data.error || "Login error. You must validate your user.");
         setTimeout(() => {
           setHidden(true);
         }, 2000);
       }
     })
-    .catch(() => setSpanTxt("Error en la solicitud. Inténtalo de nuevo."))
+    .catch(() => setSpanTxt("The request failed. Please try again."))
     .finally(() => setLoading(false));
   };
 
@@ -67,19 +72,23 @@ export default function Login() {
         <CardContent>
           <form noValidate onSubmit={handleSubmit}>
             <div className="mb-4">
-              <Label htmlFor="register-username">User</Label>
-              <Input id="register-username" minLength={2} required className="mt-1" />
+              <Label htmlFor="register-username">Username</Label>
+              <Input id="register-username" minLength={2} required className="mt-1" autoComplete='off'/>
             </div>
             <div className="mb-4">
               <Label htmlFor="register-password">Password</Label>
-              <Input id="register-password" type="password" minLength={6} maxLength={16} required className="mt-1" />
+              <Input id="register-password" type="password" minLength={6} required autoComplete='off' className="mt-1" />
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ?  <Loader2 className="animate-spin" /> : "Login"}
             </Button>
           </form>
           <div className="mt-2 text-center text-sm">
-            <span className={`text-red-500 ${hidden ? "hidden" : "block"}`}>{spanTxt}</span>
+            {
+              succes 
+              ?<span className={`text-green-500 ${hidden ? "hidden" : "block"}`}>{spanTxt}</span>
+              :<span className={`text-red-500 ${hidden ? "hidden" : "block"}`}>{spanTxt}</span>
+            }
           </div>
           <div className="mt-4 text-center text-sm">
             <Link href="/signup" className="text-blue-600 hover:underline">

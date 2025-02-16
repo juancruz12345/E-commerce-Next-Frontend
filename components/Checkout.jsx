@@ -1,95 +1,80 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { CheckoutPaypal } from './CheckoutPaypal';
+import { toast } from 'sonner';
+import { useUserContext } from '@/context/UserContext';
 
 export function Checkout({ user,cartItems, total }) {
-  const [shippingInfo, setShippingInfo] = useState({
-    name: '',
-    address: '',
-    city: '',
-    country: '',
-    zipCode: '',
-  });
+
+  const [showCheck, setShowCheck] = useState(false)
+  const [adress, setAdress] = useState('')
+  const {updateUserAddress} = useUserContext()
+  
+  
+  const handleUpdateAddress = () => {
+    updateUserAddress.mutate(adress, {
+      onSuccess: () => {
+
+        toast.success("Dirección actualizada correctamente!")
+      },
+      onError: (error) => {
+        toast.error("Error actualizando dirección:", error.message)
+      },
+    })
+  }
+  
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setShippingInfo(prevInfo => ({
-      ...prevInfo,
-      [name]: value
-    }));
-  };
+    const inputAddress = e.target.value
+    setAdress(inputAddress)
+  }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Here you would typically process the payment and create the order
-    console.log('Order placed:', { items: cartItems, total, shippingInfo });
-  };
+  const handleSubmit = (e) =>{
+    e.preventDefault()
+    handleUpdateAddress()
+  }
+  useEffect(()=>{
+    console.log('address update', adress)
+  },[user?.adress])
+  
 
   return (
     <div>
       <h2 className="text-2xl font-bold mb-4">Checkout</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <Label htmlFor="name">Full Name</Label>
-          <Input
-            id="name"
-            name="name"
-            value={shippingInfo.name}
-            onChange={handleChange}
-            required
-          />
-        </div>
+        
         <div>
           <Label htmlFor="address">Address</Label>
           <Input
             id="address"
             name="address"
-            value={shippingInfo.address}
+            defaultValue={user?.adress}
             onChange={handleChange}
             required
+            minLength={3}
           />
         </div>
-        <div>
-          <Label htmlFor="city">City</Label>
-          <Input
-            id="city"
-            name="city"
-            value={shippingInfo.city}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <Label htmlFor="country">Country</Label>
-          <Input
-            id="country"
-            name="country"
-            value={shippingInfo.country}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <Label htmlFor="zipCode">Zip Code</Label>
-          <Input
-            id="zipCode"
-            name="zipCode"
-            value={shippingInfo.zipCode}
-            onChange={handleChange}
-            required
-          />
-        </div>
+       
         <div>
           <strong>Total: ${total.toFixed(2)}</strong>
         </div>
-        <Button type="submit">Place Order</Button>
-        
-      </form>
-      <CheckoutPaypal user={user} items={cartItems} total={total} >Pagar con paypal</CheckoutPaypal>
+       <div>
+       <Button className="mt-4" type="submit">Update address</Button>
+       </div>
+       </form>
+       <div>
+       <Button className="mt-4" disabled={user.adress===null} onClick={()=>{setShowCheck(true)}}>Pagar con paypal</Button>
+       </div>
+ 
+     {
+      showCheck 
+      ?  <CheckoutPaypal user={user} items={cartItems} total={total} ></CheckoutPaypal>
+      : <></>
+     }
     </div>
   );
 }

@@ -16,7 +16,7 @@ export default function SignUp() {
   const [validated, setValidated] = useState(false);
   const [loading, setLoading] = useState(false);
   const [validEmail, setValidEmail] = useState(false);
-
+  const [succes, setSucces] = useState(false)
   
 
   const handleSubmit = async (e) => {
@@ -37,13 +37,13 @@ export default function SignUp() {
     setValidated(true)
 
     
-    const isValid = await validateEmail(email);
+    /*const isValid = await validateEmail(email);
     if (!isValid) {
         setHidden(false);
         setSpanTxt("Email inválido. Introduce un email real.");
         setLoading(false);
         return;
-    }
+    }*/
 
    
     fetch("http://localhost:5000/register", {
@@ -58,14 +58,19 @@ export default function SignUp() {
         const data = await res.json()
         setHidden(false)
         if (res.ok) {
-            setSpanTxt("Registro exitoso, revisa tu correo para verificar tu cuenta.");
+          setSucces(true)
+            setSpanTxt("Registration successful, check your email to verify your account.")
             sendEmail(email, username)
         } else {
-            setSpanTxt(data.error || "Ocurrió un error inesperado.");
+          setSucces(false)
+            setSpanTxt(data.error || "An unexpected error occurred.")
+            setTimeout(() => {
+              setHidden(true);
+            }, 2000);
         }
     })
-    .catch(() => setSpanTxt("Error en la solicitud. Inténtalo de nuevo."))
-    .finally(() => setLoading(false));
+    .catch(() => setSpanTxt("The request failed. Please try again."))
+    .finally(() => setLoading(false))
 };
 
 
@@ -101,20 +106,20 @@ const validateEmail = async (email) => {
 
 
     emailjs.send(
-        process.env.NEXT_PUBLIC_SERVICE_ID,   // Reemplázalo con tu Service ID
-        process.env.NEXT_PUBLIC_TEMPLATE_ID,  // Reemplázalo con tu Template ID
+        process.env.NEXT_PUBLIC_SERVICE_ID,  
+        process.env.NEXT_PUBLIC_TEMPLATE_ID,  
         templateParams,
-        process.env.NEXT_PUBLIC_PUBLIC_KEY   // Reemplázalo con tu Public Key
+        process.env.NEXT_PUBLIC_PUBLIC_KEY  
     )
     .then((response) => {
-        console.log("Email enviado con éxito:", response);
-        console.log("Código de estado:", response.status); // Código de estado HTTP (200 si es exitoso)
-        console.log("Texto de respuesta:", response.text); // "OK" si fue exitoso
+        console.log("Email enviado con éxito:", response)
+        console.log("Código de estado:", response.status)
+        console.log("Texto de respuesta:", response.text)
     })
     .catch((error) => {
-        console.log("Error enviando email:", error);
-    });
-};
+        console.log("Error enviando email:", error)
+    })
+}
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100 p-4">
@@ -126,15 +131,15 @@ const validateEmail = async (email) => {
           <form noValidate onSubmit={handleSubmit}>
           <div className="mb-4">
               <Label htmlFor="register-password">Email</Label>
-              <Input id="register-email" type="email" minLength={6} required className="mt-1" />
+              <Input id="register-email" type="email" minLength={6} required className="mt-1" autoComplete='off' />
             </div>
             <div className="mb-4">
-              <Label htmlFor="register-username">User</Label>
-              <Input id="register-username" minLength={2} required className="mt-1" />
+              <Label htmlFor="register-username">Username</Label>
+              <Input id="register-username" minLength={2} required className="mt-1" autoComplete='off'/>
             </div>
             <div className="mb-4">
               <Label htmlFor="register-password">Password</Label>
-              <Input id="register-password" type="password" minLength={6} maxLength={16} required className="mt-1" />
+              <Input id="register-password" type="password" minLength={6} required className="mt-1" autoComplete='off'/>
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ?  <Loader2 className="animate-spin" /> : "Sign Up"}
@@ -142,7 +147,11 @@ const validateEmail = async (email) => {
           </form>
           <div className="mt-2 text-center text-sm">
 
-            <span className={`text-red-500 ${hidden ? "hidden" : "block"}`}>{spanTxt}</span>
+            {
+              succes
+              ? <span className={`text-green-500 ${hidden ? "hidden" : "block"}`}>{spanTxt}</span>
+              : <span className={`text-red-500 ${hidden ? "hidden" : "block"}`}>{spanTxt}</span>
+            }
           </div>
           <div className="mt-4 text-center text-sm">
             <Link href="/login" className="text-blue-600 hover:underline">

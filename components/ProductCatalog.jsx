@@ -84,7 +84,7 @@ export function ProductCatalog({ onAddToCart, searchTerm }) {
               <CardFooter className="mt-4">
                 <Button 
                   onClick={() => handleAddToCart(product)} 
-                  className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-full transition-colors duration-300"
+                  className="w-full text-white font-semibold py-2 px-4 rounded-full transition-colors duration-300"
                 >
                   <ShoppingCart className="mr-2 h-5 w-5" /> Add to Cart
                 </Button>
