@@ -37,29 +37,31 @@ export function UserProvider({ children }) {
   });
 
   // ✅ Mutación para actualizar la dirección del usuario
-  const updateUserAddress = useMutation({
-    mutationFn: async (adress) => {
+  const updateUser = useMutation({
+    mutationFn: async ({ email, adress }) => { // Un solo argumento como objeto
+      console.log(email, adress);
       const response = await fetch(`http://localhost:5000/user/${user.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ adress }),
+        body: JSON.stringify({ email, adress }), // No es necesario email: email
       });
-
+  
       if (!response.ok) {
         const data = await response.json();
         throw new Error(data.message || "Error al actualizar el usuario");
       }
-      console.log('usuario actualizado')
+      console.log("usuario actualizado");
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["user"]); // Recargar usuario
-      queryClient.invalidateQueries(["profile", user?.id]); // Recargar perfil
+      queryClient.invalidateQueries(["user"]);
+      queryClient.invalidateQueries(["profile", user?.id]);
     },
   });
+  
 
   return (
-    <UserContext.Provider value={{ profile, updateUserAddress }}>
+    <UserContext.Provider value={{ profile, updateUser }}>
       {children}
     </UserContext.Provider>
   );

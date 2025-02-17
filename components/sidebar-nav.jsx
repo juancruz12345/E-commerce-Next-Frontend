@@ -8,7 +8,7 @@ import { useToken } from '@/hooks/useToken';
 
 const navItems = [
   
-  { icon: User, label: "Profile", color: "text-gray-600", component: "UserProfile" },
+ 
   { icon: TableIcon, label: "Product Catalog", color: "text-gray-600", component: "ProductCatalog" },
   { icon: ShoppingCart, label: "Cart", color: "text-gray-600", component: "ShoppingCart" },
   { icon: Truck, label: "Delivery", color: "text-gray-600", component: "DeliverySection" },

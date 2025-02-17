@@ -6,7 +6,6 @@ import { Header } from "@/components/header"
 import { ProductCatalog } from "@/components/ProductCatalog"
 import { ShoppingCart } from "@/components/ShoppingCart"
 import { OrderHistory } from "@/components/OrderHistory"
-import { UserProfile } from "@/components/UserProfile"
 import { Checkout } from "@/components/Checkout"
 import { SettingsSection } from '@/components/SettingsSection'
 import { Menu } from 'lucide-react'
@@ -19,6 +18,8 @@ export default function POSPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const {profile} = useUserContext()
+
+
 
   const handleAddToCart = (product) => {
     setCartItems(prevItems => {
@@ -49,8 +50,7 @@ export default function POSPage() {
         return <ShoppingCart cartItems={cartItems} onUpdateCart={handleUpdateCart} setActiveSection={setActiveSection} />;
       case "OrderHistory":
         return <OrderHistory user={profile}/>;
-      case "UserProfile":
-        return <UserProfile user={profile}/>;
+
       case "Checkout":
         return <Checkout user={profile} cartItems={cartItems} total={cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)} />;
       case "SettingsSection":

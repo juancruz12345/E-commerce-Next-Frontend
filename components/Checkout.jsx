@@ -12,20 +12,22 @@ export function Checkout({ user,cartItems, total }) {
 
   const [showCheck, setShowCheck] = useState(false)
   const [adress, setAdress] = useState('')
-  const {updateUserAddress} = useUserContext()
+  const {updateUser} = useUserContext()
   
   
-  const handleUpdateAddress = () => {
-    updateUserAddress.mutate(adress, {
-      onSuccess: () => {
-
-        toast.success("Dirección actualizada correctamente!")
-      },
-      onError: (error) => {
-        toast.error("Error actualizando dirección:", error.message)
-      },
-    })
-  }
+  const handleUpdate = ({ adress }) => {
+    updateUser.mutate(
+      { adress }, 
+      {
+        onSuccess: () => {
+          toast.success("Dirección actualizada correctamente!");
+        },
+        onError: (error) => {
+          toast.error("Error actualizando dirección:", error.message);
+        },
+      }
+    );
+  };
   
 
   const handleChange = (e) => {
@@ -35,7 +37,7 @@ export function Checkout({ user,cartItems, total }) {
 
   const handleSubmit = (e) =>{
     e.preventDefault()
-    handleUpdateAddress()
+    handleUpdate ({adress})
   }
   useEffect(()=>{
     console.log('address update', adress)
